@@ -1,0 +1,190 @@
+[twf]
+full_name = "Two-Weapon Fighting"
+text = """
+A style that costs you accuracy, damage, feats, and forces you to split attribute points between Str and Dex. \
+Your reward is making almost twice as many attacks as you could otherwise - doubling the value you get from \
+any sources of extra damage your class provides."""
+
+upsides = [
+    "High number of attacks, maximum value from damage bonuses"
+]
+
+downsides = [
+    "Cost of maintaining multiple weapons",
+    "Feat cost",
+    "Requires quite high investment in an attribute other than damage stat",
+    "Can be quite immobile"
+]
+
+[twf.required]
+feats = ["two-weapon_fighting_line"]
+
+[twf.recommended]
+feats =  ["dazing_assault"]
+
+[twf.replacements.classes.ranger]
+text = """
+One of the original ranger combat styles. As a ranger, you receive the feats for free and without the usual Dex prerequisites, \
+ignoring the usual downsides of this style. By doubling your attacks, this style doubles the value you receive \
+from your Favoured Enemy class feature.\
+"""
+downsides = [
+    "Cost of maintaining multiple weapons",
+    "Can be quite immobile",
+]
+
+[split_finesse]
+full_name = "Split-Stat Finesse"
+text = """
+Fighting using Dex to-hit and Str to damage. A few classes have incentives to do this, and in general you might \
+want to do this to ease the Two-Weapon Fighting attribute requirements if your class provides enough extra damage to make it work. \
+"""
+
+upsides = [
+    "Has all the defensive benefits of pure finesse",
+    "Much lower investment than pure finesse"
+]
+
+downsides = [
+    "Without a specific enabler or extremely strong source of damage from your class, damage is likely too low to be viable"
+]
+
+[split_finesse.required]
+class = ["shifter", "vigilante", "fighter", "cavalier", "samurai", "ninja"]
+feats = ["weapon_finesse"]
+
+[thf]
+full_name = "Two-Handed Fighting"
+text = """
+The simplest combat style in all of pathfinder. Get a big weapon, pump your Str, get Power Attack, smash enemies. \
+The main advantage of this is the low feat cost, allowing you to easily pick up other things. \
+"""
+upsides = [
+    "Easy high damage",
+    "Very very strong at low levels",
+    "Scales well with minimal investment",
+]
+
+downsides = [
+    "Relies on heavy armour for AC, reduces mobility somewhat"
+]
+
+[thf.required]
+feats = ["power_attack"]
+
+[thf.recommended]
+feats = ["dazing assault"]
+
+[thf.replacements.arcane]
+downsides = [
+    "Using Str as your main stat, and being unable to use heavy armour, means your AC will be quite low"
+]
+
+[pure_finesse]
+text = """
+Using Dex for both accuracy and damage. Costs some feats, but Dex is an attribute with better side benefits than Str. \ 
+Perks of Dex include: none of the penalties \
+from heavy armour, higher touch AC, better Reflex save, better initiative. \
+"""
+upsides = [
+    "Higher init",
+    "Higher touch AC / Reflex",
+    "Boosts some skills (Stealth) with high DCs that benefit from the boost"
+]
+downsides = [
+    "Feat investment",
+    "Piranha Strike scales more slowly than Power Attack",
+    "Much weaker than Strength-based weapon use at low levels"
+]
+
+[pure_finesse.required]
+feats = ["weapon_finesse", ["dex_to_damage", "slashing_grace", "fencing_grace", "dervish_dance", "starry_grace"]]
+
+[pure_finesse.replacements.classes.rogue]
+feats = ["weapon_finesse"]
+
+[archery]
+text = """
+Extremely feat-intensive but very powerful, archery has both very high damage and amazing consistency. \
+Early levels can be a bit miserable on classes that lack bonus feats, as it takes a while to come online. \
+"""
+
+upsides = [
+    "No need to worry about how to move and attack",
+    "Excellent feat support, melee characters would kill for Rapid Shot / Manyshot / Clustered Shots",
+    "Enchanted arrows eventually become an appealing consumable at higher levels"
+]
+
+downsides = [
+    "Low damage at lower levels, before you can afford a bow with proper draw strength",
+    "Uses two stats, Str and Dex",
+    "Feat intensive",
+    "Can be quite linear and immobile - just sit in one place and shoot"
+]
+
+[archery.required]
+feats = ["precise_shot", "rapid_shot", "deadly_aim", "manyshot", "clustered shots"]
+
+[snb]
+full_name = "Sword and Board"
+text = """
+Using a weapon and a shield gives you better defences at the cost of damage. Unfortunately, at low levels the extreme \
+damage of a two-handed weapon is the better defence, and at high levels the AC from a shield is relatively insignificant. \
+Still, some classes can make it work. 
+"""
+
+upsides = [
+    "Some fighting styles mandate a free off-hand but permit buckler use; they have little reason not to do this",
+    "At higher levels, having a shield as a place to put utility enchantments (e.g. fortification) is quite useful"
+]
+downsides = [
+    "At low levels, missing out on the immense damage and one-shot potential of a two-handed weapon is a large loss",
+    "At high levels, worse Power Attack and damage-from-Str scaling is a large loss"
+]
+
+[snb.recommended]
+feats = ["mobile_bulwark_line"]
+
+[reach]
+text = """
+Even without investment, reach weapons often give you one extra attack against enemies as they approach you, or prevent \
+you from being attacked by larger enemies with reach. By taking Combat Reflexes and putting a few points into Dex, they let \
+you lock down your area of the battlefield. 
+"""
+upsides = [
+    "Allows you to protect more squishy party members",
+    "Protects you against the reach advantage of Large enemies",
+    "Very low investment, just requires use of a reach weapon (which will have almost as much damage as a non-reach weapon)",
+    "Negates certain monster abilities"
+    ]
+
+downsides = [
+    "Irrelevant tactic against much larger enemies",
+    "Occasionally awkward in close quarters where you can't 5-foot-step back to attack or against enemies with Step Up"  
+]
+
+[reach.recommended]
+feats = ["combat_reflexes", "difficult_swings"]
+
+
+[trip]
+text = """
+Generally the best combat maneuver, due to having important functionality like tripping on attack or AoO baked-in instead \
+of requiring feats. Combines very well with reach, as enemies that try to approach provoke an AoO you can use to trip them \
+which will prevent their movement, essentially wasting their turn. Note that when enemies stand up from prone, they provoke \
+an AoO, but this AoO cannot be used to trip them - AoOs go off before the provoking action, so they're prone while it happens.
+"""
+
+upsides = [
+    "As Greater Trip gives you an attack upon tripping, maintains damage",
+    "Forces enemies to provoke AoOs when they stand up, potentially giving yourself and other PCs extra attacks",
+    "Very effective lockdown against (potentially multiple) melee enemies with less reach than you as you can trip when you take an Attack of Opportunity"
+]
+
+downsides = [
+    "Requires increasing investment in CMB as your level increases",
+    "At high enough levels, drops off entirely, due to most enemies being either flying or very large",
+]
+
+[trip.required]
+feats = ["improved_trip_line"]

@@ -1,0 +1,40 @@
+{% extends "item.html" %}
+{% block content %}
+{% import "macros.html" as macros %}
+
+<h1 style="margin-bottom:0">{{body.full_name}}</h1>
+{{body.text}}
+
+<table class="procontable">
+    <tr>
+        <th>
+            Pros
+        </th>
+        <th>
+            Cons
+        </th>
+    </tr>
+    {% for upside, downside in imports["zip_longest"](body.upsides, body.downsides, fillvalue = "")%}
+    <tr>
+        <td>
+            {{ upside }}
+        </td>
+        <td>
+            {{ downside }}
+        </td>
+
+    </tr>
+    {% endfor %}
+</table>
+
+{% if body.required["feats"] %}
+<br><h2 style="margin-bottom:0">Required feats:</h2>
+{{ macros.feat_tree(body.required.feat_objs, body.required.feat_objs, provides) }}
+{% endif %}
+
+{% if body.recommended["feats"] %}
+<br><h2 style="margin-bottom:0">Recommended feats:</h2>
+{{ macros.feat_tree(body.recommended.feat_objs, body.recommended.feat_objs, provides) }}
+{% endif %}
+
+{% endblock %}

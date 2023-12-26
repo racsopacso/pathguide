@@ -1,0 +1,168 @@
+[power_attack]
+text = """
+Trades attack bonus for damage at a very good rate, extremely good if the weapon is \
+held in two hands. The main source of damage scaling for almost all melee builds in pathfinder.
+"""
+
+[two-weapon_fighting_line]
+text = """
+These feats are so tied to the fighting style that there's really not much point in having \
+a different article.
+"""
+subfeats = ["two-weapon_fighting", "improved_two-weapon_fighting", "greater_two-weapon_fighting"]
+
+[mobile_bulwark_line]
+subfeats = ["mobile_bulwark_style", "mobile_fortress", "mobile_stronghold"]
+text = """
+The first feat lets you become totally immune to non-spell attacks from one direction as a move action. \
+Probably mainly of interest to casters, who can be at range (where this ability shines) and who often have a move action spare \
+but also usable by mounted characters, who have a move action free after a mounted charge. <br>
+
+The second feat represents a dramatic increase to Touch AC, which is of interest to anyone, and extends your \
+directional protection to allies (including potentially your mount). <br>
+
+The third feat lets you negate an attack as an immediate action, which is extremely powerful. <br>
+
+These feats all also gradually reduce the penalties associated with using a weapon alongside a tower shield, which is nice.
+"""
+
+[mobile_bulwark_style]
+article_redirect = "mobile_bulwark_line"
+
+[mobile_fortress]
+article_redirect = "mobile_bulwark_line"
+
+[mobile_stronghold]
+article_redirect = "mobile_bulwark_line"
+
+[two-weapon_fighting]
+article_redirect = "two-weapon_fighting_line"
+
+[improved_two-weapon_fighting]
+article_redirect = "two-weapon_fighting_line"
+
+[improved_two-weapon_fighting.prereqs]
+feats = ["two-weapon_fighting"]
+
+[greater_two-weapon_fighting]
+article_redirect = "two-weapon_fighting_line"
+
+[greater_two-weapon_fighting.prereqs]
+feats = ["two-weapon_fighting", "improved_two-weapon_fighting"]
+
+[weapon_finesse]
+text = """
+Allows you to use your Dex bonus to determine accuracy (not damage) with certain melee weapons - all light \
+ weapons and some special one-and-two-handed weapons. 
+"""
+
+[starry_grace]
+text = """
+Gives you Dex to damage with starknives. 
+"""
+
+[starry_grace.prereqs] 
+feats = ["weapon_focus", "weapon_finesse"]
+
+[fencing_grace]
+text = """
+Gives you Dex to damage with rapiers. Note that rapiers cannot be used with piranha style without a \ 
+specific magic item (effortless lace), so at higher levels they actually have worse damage than a light \
+slashing weapon used with Slashing Grace.
+"""
+
+[piranha_strike]
+text = """
+Power attack, but for light weapons - makes you a bit more inaccurate and a lot more damaging. Given that \
+this is light weapons only, this means that Dex melee characters might want to stay away from special finessable \ 
+weapons like rapiers, as they don't qualify for this. An item does exist to get around this, Effortless Lace - \
+whether dependence on a specific item like that is acceptable is for you to decide.
+"""
+
+[piranha_strike.prereqs]
+feats = ["weapon_finesse"]
+
+[fencing_grace.prereqs]
+feats = ["weapon_focus", "weapon_finesse"]
+
+[slashing_grace]
+text = """
+Gives you Dex to damage with any slashing weapon.
+"""
+
+[slashing_grace.prereqs]
+feats = ["weapon_focus", "weapon_finesse"]
+
+[rapid_shot]
+text = """
+Gives you an additional attack for a very low penalty. """
+
+[rapid_shot.prereqs]
+feats = ["point_blank_shot"]
+
+[precise_shot]
+text = """
+Without this feat, firing into melee (which you will be doing most of the time) has an extremely large penalty. \
+Basically mandatory for ranged characters, even potentially wanted on ray specialist mages.
+"""
+
+[precise_shot.prereqs]
+feats = ["point_blank_shot"]
+
+
+[dervish_dance]
+text = """
+Dex-to-damage with the scimitar. Fewer prereqs than most sources of Dex-to-damage. Generally works similarly to \
+the others, except it forbids shields entirely (no bucklers) as well as off-hand weapons. Allows the other hand to \
+be used in other ways, though - works with flurry, spell combat, etc.
+"""
+
+[dervish_dance.prereqs]
+feats = ["weapon_finesse"]
+
+[difficult_swings]
+text = """
+When you take a full attack, squares near you become difficult terrain. Difficult terrain is harder to move into, not \
+out of, so this doesn't stop people from escaping like you might think. However, if you have access to reach (from a reach \
+weapon or Lunge) it greatly inconveniences medium melee enemies, as they cannot 5-foot step in to full attack you after \
+you full attack them. 
+"""
+
+[difficult_swings.prereqs]
+feats = ["martial_focus"]
+
+[spirit_focus_-_champion]
+text = """
+Gives +1 to attack, damage, and Fort saves. That's equal to the benefits from Weapon Focus, half a Weapon Specialisation, \
+and half a Great Fortitude. Optimistically, that means this feat is worth two feats. All the feats above are bad, though, \
+being worth probably about half a feat each - but still, that suggests this feat is a decently valuable package.
+"""
+
+[steadfast_personality]
+text = """
+Add your Cha bonus instead of your Wis bonus to mind-affecting Will saves (which is almost all Will saves). If you have a Wis \
+penalty, you still take it, so you can't entirely dump it. If your Cha mod is at least +4 higher than your Wis mod this is \
+probably good enough to be worth picking up. A bad Will save is a really unfortunate weakness - fail a save against a
+<em>dominate</em> at the wrong time and everyone's dead.
+"""
+
+[eldritch_heritage_-_arcane]
+text = """
+If you have the Cha, this is two feats to get a full familiar (which takes 3 feats the normal way). This opens up familiar archetypes, \
+which are quite exciting.<br>
+Some applications include:
+<ul>
+<li>Guardian familiars act as hp batteries - for two feats, you effectively multiply your health by 1.5x.</li>
+<li>Mauler familiars inherit your BAB and a fraction of your health - they're actually decent combatants</li>
+<li>Valet familiars gain your teamwork feats, which is potentially very useful with Coordinated Charge. They also help you craft, if you're into that.</li>
+<li>Sages have their own knowledge ranks, and eventually scale up to be better at knowledge checks than most PCs</li>
+<li>As a full familiar, arcane heritage familiars qualify for Improved Familiar</li>
+</ul>
+"""
+
+[dirty_fighting]
+text ="""
+The base ability of this feat is just okay. While flanking, you get better at combat maneuvers you have invested in, and dodge \
+some of the penalties for those you haven't. The real draw, however, is that this feats sidesteps the often-terrible prerequisites \
+for the various "Improved Combat Maneuver" feats.
+"""

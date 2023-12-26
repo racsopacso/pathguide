@@ -1,0 +1,16 @@
+{% extends "item.html" %}
+{% block content %}
+{% import "macros.html" as macros %}
+
+<h1 style="margin-bottom:0">{{name.title()}}</h1>
+
+{% for obj in to_render %}
+
+{{macros.render_obj(obj)}}{{obj.text}} <a href = "?cookie_adj=add.{{name}}.{{obj.name}}">&#10062;</a> <br>
+
+
+
+{% endfor %}
+
+
+{% endblock %}

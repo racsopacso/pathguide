@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Item Details</title>
+    <link rel="stylesheet" href="{{ROOT_DIR}}static/style.css" />
+
+</head>
+<div class="sidenav">
+    <a class = "summary" href = "/summary">Summary</a>
+    <nav-title>Selected classes:</nav-title>
+    {% if included_classes %}
+    {% for class in included_classes %}
+    <div><span><a href = "{{class.get_article()}}">{{ class.full_name }} </a> </span> <span style = "float: right"> <a href = "?cookie_adj=rm.classes.{{class.name}}">&#10062;</a></span></div>
+    {% endfor %}
+    {% else %}
+    <a href = "{{ROOT_DIR}}select/classes">Select a class </a>
+    {% endif %}
+
+    <nav-title>Selected styles:</nav-title>
+    {% if included_styles %}
+    {% for style in included_styles %}
+    <div><span><a href = "{{style.get_article()}}">{{ style.full_name }} </a></span> <span style = "float: right"><a href = "?cookie_adj=rm.styles.{{style.name}}">&#10062;</a></span></div>
+    {% endfor %}
+    {% else %}
+    <a href = "{{ROOT_DIR}}select/styles">Select a style </a>
+    {% endif %}
+    
+    <nav-title>Other Styles:</nav-title>
+    {% for style in not_included_styles %}
+    <div><span><a href = "{{style.get_article()}}">{{ style.full_name }} </a></span> <span style = "float: right"><a href = "?cookie_adj=add.styles.{{style.name}}">&#9989;</a></span></div>
+    {% endfor %}
+
+</div>
+<body>
+    <div class="main">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+    
+</html>

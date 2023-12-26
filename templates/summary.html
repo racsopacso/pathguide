@@ -1,0 +1,27 @@
+{% extends "item.html" %}
+{% block content %}
+{% import "macros.html" as macros %}
+
+<h1 style="margin-bottom:0">Summary</h1>
+
+{% if not required_feats and not recommended_feats %}
+Select a class and/or style to get feat recommendations!
+
+{% else %}
+Based on your selected class and style, have a look at the following:
+
+{% if required_feats %}
+<br><h2 style="margin-bottom:0">Required feats:</h2>
+{{ macros.feat_tree(required_feats, required_feats, provides) }}
+{% endif %}
+
+{% if recommended_feats %}
+<br><h2 style="margin-bottom:0">Recommended feats:</h2>
+{{ macros.feat_tree(recommended_feats, required_feats, provides) }}
+{% endif %}
+
+{% endif %}
+
+
+
+{% endblock %}

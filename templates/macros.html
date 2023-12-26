@@ -1,0 +1,44 @@
+{% macro render_feat(feat, provides) %}
+{% if feat.is_db %}
+<a href = "{{feat.get_article()}}">{{feat.full_name}}</a>
+{% else %}
+{{feat.full_name}}
+{% endif %}
+{% if feat.is_provided(provides) %}
+&#9989;
+{% endif %}
+{% endmacro %}
+
+{% macro render_obj(obj) %}
+<a href = "{{obj.get_article()}}">{{obj.full_name}}</a>
+{% endmacro %}
+
+
+{% macro feat_tree(feat_list, req_list, provides) %}
+    <ul style="margin-top:0; display: inline-block;">
+    {% for feat in feat_list %}
+        {% if feat.is_union %}
+            {% if feat.is_provided(provides) %}
+                <li>{{feat.name.replace("_", " ").capitalize()}} provided by class</li>
+            {% else %}
+                <li>One of:</li>
+                {{ feat_tree(feat, req_list, provides) }}
+            {% endif %}
+        {% else %}
+            <li>
+            {% if feat.prereqs %}
+                {% for prereq_feat in feat.prereqs.feat_objs %}
+                    {% if prereq_feat not in req_list %}
+                        {{render_feat(prereq_feat, provides)}} -> 
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            
+            {{render_feat(feat, provides)}}
+            </li>
+
+        {% endif %}
+    {% endfor %}
+    </ul>
+
+{% endmacro %}

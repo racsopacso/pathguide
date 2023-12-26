@@ -1,0 +1,32 @@
+[rogue]
+bab = "mid"
+tags = []
+text = """
+stabby guys
+"""
+
+[rogue.provides]
+feats = ["weapon_finesse", "dex_to_damage"]
+
+[medium]
+bab = "mid"
+tags = ["caster"]
+text = """
+ghost fellows
+"""
+
+[medium.provides]
+feats = ["exotic_weapon_proficiency"]
+
+[medium.recommended]
+feats = ["spirit_focus_(champion)"]
+
+[ranger]
+bab = "full"
+tags = []
+text = """
+owo
+"""
+
+[ranger.provides]
+feats = ["two-weapon_fighting", "improved_two-weapon_fighting", "greater_two-weapon_fighting"]
