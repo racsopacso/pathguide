@@ -7,8 +7,9 @@
 
 </head>
 <div class="sidenav">
-    <a class = "summary" href = "/summary">Summary</a>
+    <a class = "summary" href = "{{ROOT_DIR}}summary">Summary</a>
     <nav-title>Selected classes:</nav-title>
+    {% set included_classes, _ = lookup_obj.classes %}
     {% if included_classes %}
     {% for class in included_classes %}
     <div><span><a href = "{{class.get_article()}}">{{ class.full_name }} </a> </span> <span style = "float: right"> <a href = "?cookie_adj=rm.classes.{{class.name}}">&#10062;</a></span></div>
@@ -18,6 +19,7 @@
     {% endif %}
 
     <nav-title>Selected styles:</nav-title>
+    {% set included_styles, not_included_styles = lookup_obj.styles %}
     {% if included_styles %}
     {% for style in included_styles %}
     <div><span><a href = "{{style.get_article()}}">{{ style.full_name }} </a></span> <span style = "float: right"><a href = "?cookie_adj=rm.styles.{{style.name}}">&#10062;</a></span></div>

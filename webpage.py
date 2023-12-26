@@ -1,5 +1,6 @@
-from fastapi import FastAPI, Query, Request
-from fastapi.responses import HTMLResponse
+from typing import Any
+from fastapi import FastAPI, Request, APIRouter
+from fastapi.responses import HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from hypercorn.asyncio import serve
@@ -10,15 +11,17 @@ import typing as t
 from pathguide import omnimap, Required
 from itertools import zip_longest, chain
 from config import ROOT_DIR
+from fastapi.routing import APIRoute
+from starlette.templating import _TemplateResponse
+from functools import partial
+
+from dataclasses import dataclass
 
 config = Config()
 config.bind = ['127.0.0.1:2345']
 config.access_log_format = '%(R)s %(s)s %(st)s %(D)s %({Header}o)s'
 config.accesslog = logging.getLogger(__name__)
 config.loglevel = 'INFO'
-#config.root_path = "/pathguide/"
-#config.keyfile = "funkydiagrams.com_private_key.key"
-#config.certfile = "funkydiagrams.com_ssl_certificate.cer"
 
 app = FastAPI()
 
@@ -46,9 +49,63 @@ def parse_cookie_adj(cookie_adj: str, cookies: t.Dict[str, str]):
     
     return key, val
 
+@dataclass
+class PageResponse:
+    html_page_name: str
+    request: Request
+    cookie_adj: t.Optional[str]
+    other: t.Optional[t.Dict[str, t.Any]] = None
+
+    def __post_init__(self):
+        if self.cookie_adj:
+            self.cookiekey, self.cookieval = parse_cookie_adj(self.cookie_adj, self.request.cookies)
+            self.request.cookies[self.cookiekey] = self.cookieval
+        
+        self.attr_cache = {}
+
+    def __getattr__(self, attr: str) -> t.Tuple[t.List, t.List]:
+        if attr in self.attr_cache:
+            return self.attr_cache[attr]
+        
+        else:
+            val = get_included_excluded(self.request.cookies, attr)
+            self.attr_cache[attr] = val
+
+            return val
+    
+    def get_feats(self, attr: str):
+        incl_styles, _ = self.styles
+        incl_classes, _ = self.classes
+        
+        elem_chain = chain(incl_styles, incl_classes)
+        
+        elem_chain = (elem for key in self.request.cookies.keys() if key in omnimap.__dict__ for elem in getattr(self, key)[0])
+
+        return {feat for obj in elem_chain if (objattr := getattr(obj, attr, None)) for feat in objattr.feat_objs}
+
+    def generate_response(self) -> _TemplateResponse:
+        incl_classes, _ = self.classes
+        provides = get_provides(incl_classes)
+
+        other = self.other if self.other else {}
+
+        resp = templates.TemplateResponse(self.html_page_name,
+                                        {"request": self.request,
+                                        "cookies": gen_sidebar(self.request.cookies),
+                                        "omnimap": omnimap,
+                                        "lookup_obj": self,
+                                        "imports": {"zip_longest": zip_longest},
+                                        "provides": provides,
+                                        "ROOT_DIR": ROOT_DIR, 
+                                        **other})
+        
+        if self.cookie_adj:
+            resp.set_cookie(key = self.cookiekey, value = self.cookieval)
+        
+        return resp
+
 def gen_sidebar(cookies: t.Dict[str, str]) -> t.Dict[str, t.List[str]]:
     ret = {k: v.split() for k, v in cookies.items()}
-    print("gen_s", ret)
     return ret
 
 page_map = {
@@ -86,96 +143,40 @@ def get_provides(classes):
 
 @app.get(ROOT_DIR + "select/{page_name}", response_class=HTMLResponse)
 async def select(request: Request, page_name: str, cookie_adj: t.Optional[str] = None):
-    print("wow")
-    if cookie_adj:
-        cookiekey, cookieval = parse_cookie_adj(cookie_adj, request.cookies)
-        request.cookies[cookiekey] = cookieval
-
-    included_styles, not_included_styles = get_included_excluded(request.cookies, "styles")
-    included_classes, _ = get_included_excluded(request.cookies, "classes")
-
-    provides = get_provides(included_classes)
+    pr_obj = PageResponse("select.html", request, cookie_adj)
 
     to_render = list(getattr(omnimap, page_name).values())
 
-    resp = templates.TemplateResponse("select.html",
-                                      {"request": request,
-                                       "cookies": gen_sidebar(request.cookies),
-                                       "omnimap": omnimap,
-                                       "included_styles": included_styles,
-                                       "not_included_styles": not_included_styles,
-                                       "included_classes": included_classes,
-                                       "name": page_name,
-                                       "to_render": to_render, 
-                                       "provides": provides,
-                                       "ROOT_DIR": ROOT_DIR})
-    
-    if cookie_adj:
-        print(cookiekey, cookieval)
-        resp.set_cookie(key = cookiekey, value = cookieval)
+    pr_obj.other = {"to_render": to_render, "name": page_name}
 
-    return resp
+    return pr_obj.generate_response()
 
 @app.get(ROOT_DIR + "{page_type}/{page_name}", response_class=HTMLResponse)
 async def read_item(request: Request, page_type: str, page_name: str, cookie_adj: t.Optional[str] = None):
-    print(request.scope.get("root_path"))
+    pr_obj = PageResponse(page_map[page_type], request, cookie_adj)
+
     bod = getattr(omnimap, page_type)[page_name]
 
-    if cookie_adj:
-        cookiekey, cookieval = parse_cookie_adj(cookie_adj, request.cookies)
-        request.cookies[cookiekey] = cookieval
-    
-    included_styles, not_included_styles = get_included_excluded(request.cookies, "styles")
-    included_classes, _ = get_included_excluded(request.cookies, "classes")
+    pr_obj.other = {"body": bod}
 
-    provides = get_provides(included_classes)
-    
-    resp = templates.TemplateResponse(page_map[page_type], 
-                                      {"request": request, 
-                                       "cookies": gen_sidebar(request.cookies), 
-                                       "body": bod, 
-                                       "included_styles": included_styles,
-                                       "included_classes": included_classes,
-                                       "not_included_styles": not_included_styles,
-                                       "imports": {"zip_longest": zip_longest},
-                                       "provides": provides,
-                                       "ROOT_DIR": ROOT_DIR})
-    
-    if cookie_adj:
-        resp.set_cookie(key = cookiekey, value = cookieval)
-
-    return resp
+    return pr_obj.generate_response()
 
 @app.get(ROOT_DIR + "summary", response_class=HTMLResponse)
 async def summary(request: Request, cookie_adj: t.Optional[str] = None):
-    if cookie_adj:
-        cookiekey, cookieval = parse_cookie_adj(cookie_adj, request.cookies)
-        request.cookies[cookiekey] = cookieval
+    pr_obj = PageResponse("summary.html", request, cookie_adj)
 
-    included_styles, not_included_styles = get_included_excluded(request.cookies, "styles")
-    included_classes, _ = get_included_excluded(request.cookies, "classes")
+    pr_obj.other = {
+        "required_feats": pr_obj.get_feats("required"),
+        "recommended_feats": pr_obj.get_feats("recommended"),
+    }
 
-    provides = get_provides(included_classes)
+    return pr_obj.generate_response()
 
-    required_feats = {feat for obj in chain(included_styles, included_classes) if obj.required for feat in obj.required.feat_objs}
-    recommended_feats = {feat for obj in chain(included_styles, included_classes) if obj.recommended for feat in obj.recommended.feat_objs}
+@app.get(ROOT_DIR, response_class=HTMLResponse)
+async def main(request: Request, cookie_adj: t.Optional[str] = None):
+    pr_obj = PageResponse("main.html", request, cookie_adj)
 
-    resp = templates.TemplateResponse("summary.html",
-                                      {"request": request,
-                                       "cookies": gen_sidebar(request.cookies),
-                                       "omnimap": omnimap,
-                                       "included_styles": included_styles,
-                                       "not_included_styles": not_included_styles,
-                                       "included_classes": included_classes, 
-                                       "required_feats": required_feats,
-                                       "recommended_feats": recommended_feats,
-                                       "provides": provides,
-                                       "ROOT_DIR": ROOT_DIR})
-    
-    if cookie_adj:
-        resp.set_cookie(key = cookiekey, value = cookieval)
-
-    return resp
+    return pr_obj.generate_response()
 
 
 asyncio.run(serve(app, config))
