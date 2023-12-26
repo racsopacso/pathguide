@@ -13,7 +13,6 @@
 <a href = "{{obj.get_article()}}">{{obj.full_name}}</a>
 {% endmacro %}
 
-
 {% macro feat_tree(feat_list, req_list, provides) %}
     <ul style="margin-top:0; display: inline-block;">
     {% for feat in feat_list %}
@@ -29,7 +28,14 @@
             {% if feat.prereqs %}
                 {% for prereq_feat in feat.prereqs.feat_objs %}
                     {% if prereq_feat not in req_list %}
-                        {{render_feat(prereq_feat, provides)}} -> 
+                        {% if prereq_feat.is_union %}
+                            {% for subfeat in prereq_feat[:-1] %}
+                                {{render_feat(subfeat, provides)}} or
+                            {% endfor %}
+                            {{render_feat(prereq_feat[-1], provides)}} ->
+                        {% else %}
+                            {{render_feat(prereq_feat, provides)}} -> 
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
             {% endif %}
@@ -40,5 +46,31 @@
         {% endif %}
     {% endfor %}
     </ul>
+
+{% endmacro %}
+
+{% macro gen_procontable(body, cookies) %}
+
+<table class="procontable">
+    <tr>
+        <th>
+            Pros
+        </th>
+        <th>
+            Cons
+        </th>
+    </tr>
+    {% for upside, downside in body.get_upside_downside(cookies) %}
+    <tr>
+        <td>
+            {{ upside}}
+        </td>
+        <td>
+            {{ downside }}
+        </td>
+
+    </tr>
+    {% endfor %}
+</table>
 
 {% endmacro %}

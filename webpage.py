@@ -104,8 +104,8 @@ class PageResponse:
         
         return resp
 
-def gen_sidebar(cookies: t.Dict[str, str]) -> t.Dict[str, t.List[str]]:
-    ret = {k: v.split() for k, v in cookies.items()}
+def gen_sidebar(cookies: t.Dict[str, str]) -> t.Dict[str, t.Set[str]]:
+    ret = {k: set(v.split()) for k, v in cookies.items()}
     return ret
 
 page_map = {

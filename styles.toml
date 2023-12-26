@@ -1,9 +1,20 @@
 [twf]
 full_name = "Two-Weapon Fighting"
-text = """
-A style that costs you accuracy, damage, feats, and forces you to split attribute points between Str and Dex. \
-Your reward is making almost twice as many attacks as you could otherwise - doubling the value you get from \
-any sources of extra damage your class provides."""
+text = [
+    """
+    Two-weapon fighting is largely about making a lot of attacks. It'll roughly double the number of attacks you make, \
+    at the cost of some feats and a penalty to to-hit. Damage from Power Attack / Piranha Strike and your damage attribute \
+    are reduced for your off-hand, so this combat style only generally makes sense if you have some other source of damage \
+    generally from your class.
+    """, 
+    ["attribute",
+    """
+    The Two-Weapon Fighting feats require large amounts of Dex, which is very annoying as a character seeking to \
+    use Strength as their primary damage attribute. Aside from straining your point-buy, the Dex prereqs often \
+    make you unable to benefit from size increases (as they reduce your Dex). The Artful Dodge feat allows you \
+    to use Int for this requirement instead, which some characters may be interested in.
+    """]
+]
 
 upsides = [
     "High number of attacks, maximum value from damage bonuses"
@@ -12,7 +23,7 @@ upsides = [
 downsides = [
     "Cost of maintaining multiple weapons",
     "Feat cost",
-    "Requires quite high investment in an attribute other than damage stat",
+    ["attribute", "Requires quite high investment in Dex"],
     "Can be quite immobile"
 ]
 
@@ -20,25 +31,44 @@ downsides = [
 feats = ["two-weapon_fighting_line"]
 
 [twf.recommended]
-feats =  ["dazing_assault"]
+feats =  ["dazing_assault", "hand's_autonomy", "artful_dodge"]
 
 [twf.replacements.classes.ranger]
-text = """
-One of the original ranger combat styles. As a ranger, you receive the feats for free and without the usual Dex prerequisites, \
-ignoring the usual downsides of this style. By doubling your attacks, this style doubles the value you receive \
-from your Favoured Enemy class feature.\
-"""
+text = [
+    ["attribute",
+    """
+    As a ranger, you can ignore the Dex prerequisites of Two-Weapon Fighting, allowing you to focus entirely on Strength. \
+    Even though you sidestep the main disadvantage of this style, ranger's class bonuses to damage are not amazingly high, so \
+    they can't benefit from this as much as some other classes might. Still, it's definitely a competitive style.
+    """]
+]
+
 downsides = [
-    "Cost of maintaining multiple weapons",
-    "Can be quite immobile",
+    ["attribute", ""]
+]
+
+[twf.replacements.feats.artful_dodge]
+text = [
+    ["attribute",
+    """
+    Thanks to Artful Dodger, you are able to use Int to qualify for the Two-Weapon Fighting feats. This is advantageous, because \
+    Int is easier to raise through items than Dex (if you're using Str as your damage stat) because Str and Dex both use the belt
+    slot.
+    """]
+]
+downsides = [
+    ["attribute",
+    """
+    Requires quite high investment in Int
+    """]
 ]
 
 [split_finesse]
 full_name = "Split-Stat Finesse"
-text = """
+text = ["""
 Fighting using Dex to-hit and Str to damage. A few classes have incentives to do this, and in general you might \
 want to do this to ease the Two-Weapon Fighting attribute requirements if your class provides enough extra damage to make it work. \
-"""
+"""]
 
 upsides = [
     "Has all the defensive benefits of pure finesse",
@@ -55,10 +85,10 @@ feats = ["weapon_finesse"]
 
 [thf]
 full_name = "Two-Handed Fighting"
-text = """
+text = ["""
 The simplest combat style in all of pathfinder. Get a big weapon, pump your Str, get Power Attack, smash enemies. \
 The main advantage of this is the low feat cost, allowing you to easily pick up other things. \
-"""
+"""]
 upsides = [
     "Easy high damage",
     "Very very strong at low levels",
@@ -73,19 +103,19 @@ downsides = [
 feats = ["power_attack"]
 
 [thf.recommended]
-feats = ["dazing assault"]
+feats = ["dazing_assault"]
 
-[thf.replacements.arcane]
+[thf.replacements.tags.arcane]
 downsides = [
     "Using Str as your main stat, and being unable to use heavy armour, means your AC will be quite low"
 ]
 
 [pure_finesse]
-text = """
+text = ["""
 Using Dex for both accuracy and damage. Costs some feats, but Dex is an attribute with better side benefits than Str. \ 
 Perks of Dex include: none of the penalties \
 from heavy armour, higher touch AC, better Reflex save, better initiative. \
-"""
+"""]
 upsides = [
     "Higher init",
     "Higher touch AC / Reflex",
@@ -100,14 +130,11 @@ downsides = [
 [pure_finesse.required]
 feats = ["weapon_finesse", ["dex_to_damage", "slashing_grace", "fencing_grace", "dervish_dance", "starry_grace"]]
 
-[pure_finesse.replacements.classes.rogue]
-feats = ["weapon_finesse"]
-
 [archery]
-text = """
+text = ["""
 Extremely feat-intensive but very powerful, archery has both very high damage and amazing consistency. \
 Early levels can be a bit miserable on classes that lack bonus feats, as it takes a while to come online. \
-"""
+"""]
 
 upsides = [
     "No need to worry about how to move and attack",
@@ -123,15 +150,15 @@ downsides = [
 ]
 
 [archery.required]
-feats = ["precise_shot", "rapid_shot", "deadly_aim", "manyshot", "clustered shots"]
+feats = ["precise_shot", "rapid_shot", "deadly_aim", "manyshot", "clustered_shots"]
 
 [snb]
 full_name = "Sword and Board"
-text = """
+text = ["""
 Using a weapon and a shield gives you better defences at the cost of damage. Unfortunately, at low levels the extreme \
 damage of a two-handed weapon is the better defence, and at high levels the AC from a shield is relatively insignificant. \
 Still, some classes can make it work. 
-"""
+"""]
 
 upsides = [
     "Some fighting styles mandate a free off-hand but permit buckler use; they have little reason not to do this",
@@ -146,11 +173,11 @@ downsides = [
 feats = ["mobile_bulwark_line"]
 
 [reach]
-text = """
+text = ["""
 Even without investment, reach weapons often give you one extra attack against enemies as they approach you, or prevent \
 you from being attacked by larger enemies with reach. By taking Combat Reflexes and putting a few points into Dex, they let \
 you lock down your area of the battlefield. 
-"""
+"""]
 upsides = [
     "Allows you to protect more squishy party members",
     "Protects you against the reach advantage of Large enemies",
@@ -168,12 +195,12 @@ feats = ["combat_reflexes", "difficult_swings"]
 
 
 [trip]
-text = """
+text = ["""
 Generally the best combat maneuver, due to having important functionality like tripping on attack or AoO baked-in instead \
 of requiring feats. Combines very well with reach, as enemies that try to approach provoke an AoO you can use to trip them \
 which will prevent their movement, essentially wasting their turn. Note that when enemies stand up from prone, they provoke \
 an AoO, but this AoO cannot be used to trip them - AoOs go off before the provoking action, so they're prone while it happens.
-"""
+"""]
 
 upsides = [
     "As Greater Trip gives you an attack upon tripping, maintains damage",
@@ -188,3 +215,6 @@ downsides = [
 
 [trip.required]
 feats = ["improved_trip_line"]
+
+[trip.recommended]
+feats = ["combat_reflexes"]

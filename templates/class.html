@@ -3,29 +3,13 @@
 {% import "macros.html" as macros %}
 
 <h1 style="margin-bottom:0">{{body.full_name}}</h1>
-{{body.text}}
+{% for text in body.text.get_text(cookies) %}
+<p>
+{{text}}
+</p>
+{% endfor %}
 
-<table class="procontable">
-    <tr>
-        <th>
-            Pros
-        </th>
-        <th>
-            Cons
-        </th>
-    </tr>
-    {% for upside, downside in imports["zip_longest"](body.upsides, body.downsides, fillvalue = "")%}
-    <tr>
-        <td>
-            {{ upside }}
-        </td>
-        <td>
-            {{ downside }}
-        </td>
-
-    </tr>
-    {% endfor %}
-</table>
+{{macros.gen_procontable(body, cookies)}}
 
 {% if body.required["feats"] %}
 <br><h2 style="margin-bottom:0">Required feats:</h2>

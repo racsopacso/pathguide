@@ -1,9 +1,9 @@
 [rogue]
 bab = "mid"
 tags = []
-text = """
+text = ["""
 stabby guys
-"""
+"""]
 
 [rogue.provides]
 feats = ["weapon_finesse", "dex_to_damage"]
@@ -11,9 +11,9 @@ feats = ["weapon_finesse", "dex_to_damage"]
 [medium]
 bab = "mid"
 tags = ["caster"]
-text = """
+text = ["""
 ghost fellows
-"""
+"""]
 
 [medium.provides]
 feats = ["exotic_weapon_proficiency"]
@@ -24,9 +24,9 @@ feats = ["spirit_focus_(champion)"]
 [ranger]
 bab = "full"
 tags = []
-text = """
+text = ["""
 owo
-"""
+"""]
 
 [ranger.provides]
 feats = ["two-weapon_fighting", "improved_two-weapon_fighting", "greater_two-weapon_fighting"]

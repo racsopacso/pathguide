@@ -1,0 +1,26 @@
+[attributes.strength]
+text = ["""
+The default attribute for all melee combat, and the default attribute for ranged damage. Strength \
+as an attribute is very good at these things, but really doesn't have any other side benefits worth \
+writing home over.""",
+]
+
+[attributes.charisma]
+text = ["""
+Of all the attributes, Charisma probably has the least exciting side benefits. Unless your class \
+specifically uses it, all it does is drive some skills - and if you really want to get good at those \
+skills, you can, with or without Cha. It makes up for this by providing access to some pretty good feats.
+""",
+"""
+If your campaign allows Leadership, this changes dramatically. Your Cha determines how powerful a cohort \
+you can attract, and your cohort is a whole second character. In such campaigns, a negative Cha modifier \ 
+is a significant liability, and each point of Cha buys you valuable wriggle room for things like "getting \
+your cohorts killed". 
+"""]
+
+[attributes.charisma.recommended]
+feats = [
+    "eldritch_heritage_-_arcane",
+    "steadfast_personality",
+    "noble_scion_-_war"
+]
