@@ -6,7 +6,8 @@ stabby guys
 """]
 
 [rogue.provides]
-feats = ["weapon_finesse", "dex_to_damage"]
+feats = ["weapon_finesse"]
+rules_concepts = ["dex_to_damage"]
 
 [medium]
 bab = "mid"
@@ -17,6 +18,7 @@ ghost fellows
 
 [medium.provides]
 feats = ["exotic_weapon_proficiency"]
+attributes = ["charisma"]
 
 [medium.recommended]
 feats = ["spirit_focus_(champion)"]

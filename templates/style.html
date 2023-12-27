@@ -12,14 +12,21 @@
 {{macros.gen_procontable(body, cookies)}}
 
 
-{% if body.required["feats"] %}
+{% if body.required %}
 <br><h2 style="margin-bottom:0">Required feats:</h2>
-{{ macros.feat_tree(body.required.feat_objs, body.required.feat_objs, provides) }}
+{{ macros.feat_tree(body.required.feats, body.required.feats, provides) }}
+<br>
+{% for concept in body.required.concepts %}
+And get {{concept.full_name}} from one of: <br>
+
+{{macros.feat_tree(concept.sources.feats, body.required.feats, provides)}}
+
+{% endfor %}
 {% endif %}
 
-{% if body.recommended["feats"] %}
+{% if body.recommended %}
 <br><h2 style="margin-bottom:0">Recommended feats:</h2>
-{{ macros.feat_tree(body.recommended.feat_objs, body.required.feat_objs, provides) }}
+{{ macros.feat_tree(body.recommended.feats, body.required.feats, provides) }}
 {% endif %}
 
 {% endblock %}

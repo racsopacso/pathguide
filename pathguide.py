@@ -11,6 +11,31 @@ from tomli import loads as tloads
 
 from dataclasses import dataclass
 
+"""
+Object types: 
+ - Classes, Styles, Feats, RulesConcepts, SubObject
+
+   Classes and Styles exist at the top level. They are never pointed to, they only point.
+
+   Feats may have Feats as prerequisites.
+
+   RulesConcepts may list Feats and RulesConcepts that are sources for them, and Feats that are recommended when you have them. 
+
+   dex_to_damage is sourced from a list of feats
+
+   those list of feats all provide dex to damage
+
+   to avoid loops, either travel strictly down the tree, or strictly up the tree
+
+   it's okay to go to dex to damage, compare the feats you have to the feats it's sourced from
+
+   it's also okay to go to Slashing Grace, see it provides dex_to_damage, then recommend the things recommended by dex to damage
+
+   but if you ask what dex_to_damage is sourced from, then what those things provide... 
+
+   loop!
+"""
+
 class TaggedText(BaseModel):
     tag: str
     text: str
@@ -26,7 +51,6 @@ class TaggedText(BaseModel):
                         return self.tagmap[category][item]
         
         return self.text
-    
 
 def gen_title(name: str):
     itername = iter(name)
@@ -98,13 +122,17 @@ class RulesObj(BaseModel):
     
     article_redirect: t.Optional[str] = None
     url_prefix: t.ClassVar[t.Optional[str]] = None
+    
+    type: t.ClassVar[t.Optional[str]] = None
 
     upsides: t.Optional[TextList] = None
     downsides: t.Optional[TextList] = None
 
-    recommended: t.Optional[Required] = None
+    recommended: t.Optional[LinkCollection] = None
 
-    required: t.Optional[Required] = None
+    required: t.Optional[LinkCollection] = None
+
+    provides: t.Optional[LinkCollection] = None
 
     def __hash__(self):
         return hash(self.name)
@@ -121,8 +149,35 @@ class RulesObj(BaseModel):
         downside = self.downsides.get_text(elems) if self.downsides else []
         
         return it.zip_longest(upside, downside, fillvalue = "")
-        
+    
+    @classmethod
+    def parse_toml(cls, base_name: str, input_dict: dict):
+        if "full_name" not in input_dict:
+            input_dict["full_name"] = gen_title(base_name)  
 
+        input_dict["name"] = base_name
+
+        for field_name, field_obj in cls.model_fields.items():
+            if field_obj.annotation == t.Optional[TextList]:
+                if field_name in input_dict:
+                    input_dict[field_name] = TextList(text_list = [elem if isinstance(elem, str) else TaggedText(tag=elem[0], text=elem[1]) for elem in input_dict[field_name]])
+
+            if field_obj.annotation == t.Optional[LinkCollection]:
+                if field_name in input_dict:
+                    linklist = []
+
+                    for key in input_dict[field_name]:
+                        link_cls = FeatObjLink if key == "feats" else ObjLink
+                        linklist += [link_cls(obj=obj, type=key) for obj in input_dict[field_name][key]]
+
+                    input_dict[field_name] = LinkCollection(links = linklist)
+
+        ret = cls.model_validate(input_dict)
+    
+        if "replacements" in input_dict:
+            ret.add_tags(input_dict["replacements"])
+        
+        return ret
         
     @property
     def title(self):
@@ -130,76 +185,100 @@ class RulesObj(BaseModel):
 
     def add_tags(self, replacements: t.Dict[str, t.Dict[str, t.Dict[str, t.List[t.Tuple[str, str]]]]]):
         # looks like ["classes"]["ranger"]["text"] = TaggedText(tag = "attribute", text = "...")
-        
         # reqs: {"classes": {"fighter"}, "styles": {"thf", "reach"}}
 
         for category, idict in replacements.items():
             # i = "classes", "styles"
             for item, iidict in idict.items():
                 # ii = "rogue", "ranger"
-                print(iidict)
                 for attr, taglist in iidict.items():
                     # iii = "text", "upsides" 
                     textlist: TextList = getattr(self, attr)
-                    
 
                     for tag_amendment in taglist:
                         textlist.set_up_tagmap(category, item, tag_amendment)
                     # inside 'items' we replace all text with tag 'x' with equivalent text from taglist
 
-def parse_feat_elem(feat_elems: t.List[str | t.List[str]]):
-    for feat_elem in feat_elems:
-        if isinstance(feat_elem, str):
-            ret = feat_dict.get(feat_elem, NonDBFeat(name=feat_elem))
+def parse_feat_elem(feat_elem: str | t.List[str]):
+    if isinstance(feat_elem, str):
+        ret = omnidict["feats"].get(feat_elem, NonDBFeat(name=feat_elem))
 
-            if isinstance(ret, NonDBFeat):
-                yield ret
-            
-            else:
-                if ret.subfeats:
-                    yield from parse_feat_elem(ret.subfeats)
-                else:
-                    yield ret
-
+        if isinstance(ret, NonDBFeat):
+            yield ret
+        
         else:
-            yield FeatUnion(name = feat_elem[0], elements = [obj for obj in parse_feat_elem(feat_elem[1:])])
+            if ret.subfeats:
+                yield from (feat for subfeat in ret.subfeats for feat in parse_feat_elem(subfeat))
+            else:
+                yield ret
 
-class Required(BaseModel):
-    feats: t.List[str | t.List[str]] = []
+    else:
+        yield FeatUnion(name = feat_elem[0], elements = [res_elem for elem in feat_elem[1:] for res_elem in parse_feat_elem(elem)])
+
+
+class FeatObjLink(BaseModel):
+    obj: str | t.List[str]
+    type: str
 
     @cached_property
-    def feat_objs(self) -> t.List[Feat | FeatUnion | NonDBFeat]:
-        return {obj for obj in parse_feat_elem(self.feats)}
+    def objs(self) -> t.Tuple[Feat | FeatUnion | NonDBFeat, ...]:
+        return tuple(parse_feat_elem(self.obj))
     
-    def __add__(self, other):
-        if type(other) != type(self):
-            return NotImplemented
-        else:
-            return type(self)(**{k: getattr(self, k) + getattr(other, k) for k in self.model_fields.keys()})
+class ObjLink(BaseModel):
+    obj: str | t.List[str]
+    type: str
+
+    @cached_property
+    def objs(self) -> t.Tuple[Feat | FeatUnion | NonDBFeat]:
+        return (omnidict[self.type][self.obj],)
+
+class LinkCollection(BaseModel):
+    links: t.List[ObjLink | FeatObjLink]
+
+    def __iter__(self):
+        return iter(self.objs)
+
+    @cached_property
+    def objs(self) -> t.Set[RulesObj]:
+        ret = set(it.chain(*(link.objs for link in self.links)))
+        return ret
+
+    @cached_property
+    def feats(self) -> t.Set[Feat | NonDBFeat | FeatUnion]:
+        return {val for val in self.objs if type(val) in (Feat, NonDBFeat, FeatUnion)}
+    
+    @cached_property
+    def concepts(self) -> t.Set[RulesConcept]:
+        return {val for val in self.objs if isinstance(val, RulesConcept)}
 
 class Style(RulesObj):
     url_prefix: t.ClassVar[t.Optional[str]] = "styles/"
+    type: t.ClassVar[t.Optional[str]] = "styles"
 
-    def __repr__(self):
-        return "Style(" + ", ".join((self.name, str(self.replacements), str(self.required))) + ")"
+class Attribute(RulesObj):
+    url_prefix: t.ClassVar[t.Optional[str]] = "attributes/"
+    type: t.ClassVar[t.Optional[str]] = "attributes"
 
-class Replacement(BaseModel):
-    condition: str
-    replace_dict: t.Dict[str, t.Any]
+class RulesConcept(RulesObj):
+    url_prefix: t.ClassVar[t.Optional[str]] = "rules_concepts/"
+    type: t.ClassVar[t.Optional[str]] = "rules_concepts"
+    
+    
+    sources: t.Optional[LinkCollection] = None
+
+    def is_provided(self, providedlist):
+        return self in providedlist or any(source in providedlist for source in self.sources)
 
 class Class(RulesObj):
-    provides: t.Optional[Required] = None
     url_prefix: t.ClassVar[t.Optional[str]] = "classes/"
-
-    def __repr__(self):
-        return "Class(" + ", ".join((self.name, str(self.replacements), str(self.required))) + ")"
+    type: t.ClassVar[t.Optional[str]] = "classes"
 
 class Feat(RulesObj):
     subfeats: t.Optional[t.List[str]] = None
-    prereqs: t.Optional[Required] = None
+    prereqs: t.Optional[LinkCollection] = None
     url_prefix: t.ClassVar[t.Optional[str]] = "feats/"
-    is_union: t.ClassVar[bool] = False
-    is_db: t.ClassVar[bool] = True
+
+    type: t.ClassVar[t.Optional[str]] = "feats"
 
     @property
     def full_line(self):
@@ -209,11 +288,12 @@ class Feat(RulesObj):
             return self.full_name
 
     def is_provided(self, provideddict: t.Dict[str, t.Set[str]]):
-        return self.name in provideddict.feats
+        return self in provideddict
 
 class NonDBFeat(BaseModel):
     name: str
-    is_db: t.ClassVar[bool] = False
+    
+    type: t.ClassVar[t.Optional[str]] = "nondbfeat"
 
     def get_article(self):
         return ""
@@ -226,7 +306,7 @@ class NonDBFeat(BaseModel):
         return hash(self.name)
     
     def is_provided(self, provideddict: t.Dict[str, t.Set[str]]):
-        return self.name in provideddict.feats
+        return self in provideddict
     
     @property
     def title(self):
@@ -236,7 +316,8 @@ class NonDBFeat(BaseModel):
 class FeatUnion(BaseModel):
     name: str
     elements: t.List[Feat | NonDBFeat]
-    is_union: t.ClassVar[bool] = True
+    
+    type: t.ClassVar[t.Optional[str]] = "featunion"
     
     def __iter__(self):
         return iter(self.elements)
@@ -245,7 +326,7 @@ class FeatUnion(BaseModel):
         return hash(self.name)
     
     def is_provided(self, provideddict: t.Dict[str, t.Set[str]]):
-        return self.name in provideddict.feats
+        return self in provideddict
     
     def in_list(self, list):
         return any(elem in list for elem in self.elements)
@@ -258,6 +339,8 @@ class OmniMap:
     styles: t.Dict[str, Style]
     classes: t.Dict[str, Class]
     feats: t.Dict[str, Feat]
+    attributes: t.Dict[str, RulesObj]
+    rules_concepts: t.Dict[str, RulesConcept]
 
 # def amend_toml_subelems(style: str | dict):
 #     if not isinstance(style, dict):
@@ -265,37 +348,25 @@ class OmniMap:
     
 #     return {k: amend_toml_subelems(v) for k, v in style.items()}
 
-def parse_toml_elem(base_name: str, style: dict, cls: RulesObj) -> RulesObj:
-    if "full_name" not in style:
-        style["full_name"] = gen_title(base_name)  
-
-    style["name"] = base_name
-
-    for val in ("text", "upsides", "downsides"):
-        if val in style:
-            style[val] = TextList(text_list = [elem if isinstance(elem, str) else TaggedText(tag=elem[0], text=elem[1]) for elem in style[val]])
-    
-    ret = cls.model_validate(style)
-
-    if "replacements" in style:
-        ret.add_tags(style["replacements"])
-    
-    return ret
-
-with open("feats.toml", "r") as f:
-    toml = tloads(f.read())
-    feat_dict = {base_name: parse_toml_elem(base_name, feat, Feat) for base_name, feat in toml.items()}
-
-with open("styles.toml", "r") as f:
-    toml = tloads(f.read())
-    style_dict = {base_name: parse_toml_elem(base_name, style, Style) for base_name, style in toml.items()}
-
-with open("classes.toml", "r") as f:
-    toml = tloads(f.read())
-    class_dict = {base_name: parse_toml_elem(base_name, cls, Class) for base_name, cls in toml.items()}
 
 with open("misc_rules_objs.toml", "r") as f:
     toml = tloads(f.read())
-    dictdict = {base_name: {subname: parse_toml_elem(subname, subcls, RulesObj) for subname, subcls in cls.items()} for base_name, cls in toml.items()}
+    omnidict = {base_name: {subname: RulesConcept.parse_toml(subname, subcls) for subname, subcls in cls.items()} for base_name, cls in toml.items()}
 
-omnimap = OmniMap(styles=style_dict, classes = class_dict, feats = feat_dict)
+with open("feats.toml", "r") as f:
+    toml = tloads(f.read())
+    omnidict["feats"] = {base_name: Feat.parse_toml(base_name, feat) for base_name, feat in toml.items()}
+
+with open("styles.toml", "r") as f:
+    toml = tloads(f.read())
+    omnidict["styles"] = {base_name: Style.parse_toml(base_name, style) for base_name, style in toml.items()}
+
+with open("classes.toml", "r") as f:
+    toml = tloads(f.read())
+    omnidict["classes"] = {base_name: Class.parse_toml(base_name, cls) for base_name, cls in toml.items()}
+
+with open("rules_concepts.toml", "r") as f:
+    toml = tloads(f.read())
+    omnidict["rules_concepts"] = {base_name: RulesConcept.parse_toml(base_name, style) for base_name, style in toml.items()}
+
+omnimap = OmniMap(**omnidict)

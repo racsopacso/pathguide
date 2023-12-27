@@ -4,24 +4,30 @@
 
 <h1 style="margin-bottom:0">Summary</h1>
 
-{% if not required_feats and not recommended_feats %}
+{% if not provided %}
 Select a class and/or style to get feat recommendations!
 
 {% else %}
 Based on your selected class and style, have a look at the following:
 
-{% if required_feats %}
-<br><h2 style="margin-bottom:0">Required feats:</h2>
-{{ macros.feat_tree(required_feats, required_feats, provides) }}
+{% for provided_obj in provided %}
+
+<h2 style="margin-bottom:0">{{provided_obj.full_name}}</h2>
+
+{% if provided_obj.required %}
+<h3 style="margin-bottom:0">Required feats:</h3>
+{{ macros.feat_tree(provided_obj.required.objs, provided_obj.required.objs, provides) }}
 {% endif %}
 
-{% if recommended_feats %}
-<br><h2 style="margin-bottom:0">Recommended feats:</h2>
-{{ macros.feat_tree(recommended_feats, required_feats, provides) }}
+{% if provided_obj.recommended %}
+<h3 style="margin-bottom:0">Recommended feats:</h3>
+To improve {{ provided_obj.full_name }}, look at <br>
+{{ macros.feat_tree(provided_obj.recommended.objs, provided_obj.required.objs, provides) }}
 {% endif %}
 
-{% endif %}
+{% endfor %}
 
+{% endif %}
 
 
 {% endblock %}

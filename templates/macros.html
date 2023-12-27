@@ -1,11 +1,11 @@
 {% macro render_feat(feat, provides) %}
-{% if feat.is_db %}
-<a href = "{{feat.get_article()}}">{{feat.full_name}}</a>
-{% else %}
+{% if feat.type == "nondbfeat" %}
 {{feat.full_name}}
+{% else %}
+<a href = "{{feat.get_article()}}">{{feat.full_name}}</a>
 {% endif %}
 {% if feat.is_provided(provides) %}
-&#9989;
+provided by class
 {% endif %}
 {% endmacro %}
 
@@ -16,19 +16,19 @@
 {% macro feat_tree(feat_list, req_list, provides) %}
     <ul style="margin-top:0; display: inline-block;">
     {% for feat in feat_list %}
-        {% if feat.is_union %}
+        {% if feat.type == "rules_concepts" %}
             {% if feat.is_provided(provides) %}
                 <li>{{feat.name.replace("_", " ").capitalize()}} provided by class</li>
             {% else %}
-                <li>One of:</li>
-                {{ feat_tree(feat, req_list, provides) }}
+                <li>Get {{feat.name.replace("_", " ")}} from one of:</li>
+                {{ feat_tree(feat.sources.feats, req_list, provides) }}
             {% endif %}
         {% else %}
             <li>
             {% if feat.prereqs %}
-                {% for prereq_feat in feat.prereqs.feat_objs %}
+                {% for prereq_feat in feat.prereqs.feats %}
                     {% if prereq_feat not in req_list %}
-                        {% if prereq_feat.is_union %}
+                        {% if prereq_feat.type == "featunion" %}
                             {% for subfeat in prereq_feat[:-1] %}
                                 {{render_feat(subfeat, provides)}} or
                             {% endfor %}

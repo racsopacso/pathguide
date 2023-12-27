@@ -1,0 +1,25 @@
+[dex_to_damage]
+text = """
+A means of adding your Dex modifier to your damage, instead of just to your attack.
+"""
+
+[dex_to_damage.sources]
+feats = ["dervish_dance", "slashing_grace", "starry_grace", "fencing_grace"]
+
+[mount]
+text = """
+A creature to ride into battle that uses its own actions to move.
+"""
+
+feats = ["eldritch_heritage_-_arcane", "animal_ally"]
+
+[swift_action_use]
+text = """
+Pathfinder inherits much of its design philosophy from 3.5, and 3.5 didn't have swift actions until partway through its \
+development. Because of this, many classes (especially earlier classes) don't have a use for their swift action at all, \
+making picking up an ability to use it quite high-value for them.
+"""
+
+[swift_action_use.sources]
+feats = ["snake_style"]
+

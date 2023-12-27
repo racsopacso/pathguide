@@ -81,7 +81,6 @@ downsides = [
 ]
 
 [split_finesse.required]
-class = ["shifter", "vigilante", "fighter", "cavalier", "samurai", "ninja"]
 feats = ["weapon_finesse"]
 
 [thf]
@@ -129,7 +128,8 @@ downsides = [
 ]
 
 [pure_finesse.required]
-feats = ["weapon_finesse", ["dex_to_damage", "slashing_grace", "fencing_grace", "dervish_dance", "starry_grace"]]
+feats = ["weapon_finesse"]
+rules_concepts = ["dex_to_damage"]
 
 [archery]
 text = ["""

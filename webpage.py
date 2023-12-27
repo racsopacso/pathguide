@@ -8,7 +8,7 @@ import asyncio
 from hypercorn.config import Config
 import logging
 import typing as t
-from pathguide import omnimap, Required
+from pathguide import omnimap, FeatObjLink, RulesObj, Class
 from itertools import zip_longest, chain
 from config import ROOT_DIR
 from fastapi.routing import APIRoute
@@ -49,6 +49,17 @@ def parse_cookie_adj(cookie_adj: str, cookies: t.Dict[str, str]):
     
     return key, val
 
+def chain_of_providence(start: RulesObj):
+    if start.type == "nondbfeat":
+        return
+    
+    if getattr(start, "required", None) or getattr(start, "recommended", None):
+        yield start
+    
+    if start.provides:
+        for provided_obj in start.provides.objs:
+            yield from chain_of_providence(provided_obj)
+
 @dataclass
 class PageResponse:
     html_page_name: str
@@ -63,7 +74,7 @@ class PageResponse:
         
         self.attr_cache = {}
 
-    def __getattr__(self, attr: str) -> t.Tuple[t.List, t.List]:
+    def __getattr__(self, attr: str) -> t.Tuple[t.List[RulesObj], t.List[RulesObj]]:
         if attr in self.attr_cache:
             return self.attr_cache[attr]
         
@@ -73,15 +84,13 @@ class PageResponse:
 
             return val
     
-    def get_feats(self, attr: str):
+    def get_provides(self):
         incl_styles, _ = self.styles
         incl_classes, _ = self.classes
-        
-        elem_chain = chain(incl_styles, incl_classes)
-        
-        elem_chain = (elem for key in self.request.cookies.keys() if key in omnimap.__dict__ for elem in getattr(self, key)[0])
 
-        return {feat for obj in elem_chain if (objattr := getattr(obj, attr, None)) for feat in objattr.feat_objs}
+        elem_chain = chain(incl_styles, incl_classes)
+
+        return [feat for obj in elem_chain for feat in chain_of_providence(obj)]    
 
     def generate_response(self) -> _TemplateResponse:
         incl_classes, _ = self.classes
@@ -114,7 +123,7 @@ page_map = {
     "classes": "class.html"
 }
 
-def get_included_excluded(cookies: t.Dict[str, str], key: str):
+def get_included_excluded(cookies: t.Dict[str, str], key: str) -> t.Tuple[t.List[RulesObj], t.List[RulesObj]]:
     included = []
     not_included = []
 
@@ -128,18 +137,11 @@ def get_included_excluded(cookies: t.Dict[str, str], key: str):
     
     return included, not_included
 
-def get_provides(classes):
+def get_provides(classes: t.List[Class] | None) -> t.Set[FeatObjLink]:
     if not classes:
-        return Required()
+        return []
     
-    iterclasses = iter(cls.provides for cls in classes)
-    cls = next(iterclasses)
-    
-    for itercls in iterclasses:
-        cls = cls + itercls
-
-    return cls
-        
+    return set(chain(*(cls.provides for cls in classes)))
 
 @app.get(ROOT_DIR + "select/{page_name}", response_class=HTMLResponse)
 async def select(request: Request, page_name: str, cookie_adj: t.Optional[str] = None):
@@ -166,8 +168,7 @@ async def summary(request: Request, cookie_adj: t.Optional[str] = None):
     pr_obj = PageResponse("summary.html", request, cookie_adj)
 
     pr_obj.other = {
-        "required_feats": pr_obj.get_feats("required"),
-        "recommended_feats": pr_obj.get_feats("recommended"),
+        "provided": pr_obj.get_provides()
     }
 
     return pr_obj.generate_response()
