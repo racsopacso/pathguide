@@ -129,7 +129,8 @@ feats = ["point_blank_shot"]
 text = ["""
 Dex-to-damage with the scimitar. Fewer prereqs than most sources of Dex-to-damage. Generally works similarly to \
 the others, except it forbids shields entirely (no bucklers) as well as off-hand weapons. Allows the other hand to \
-be used in other ways, though - works with flurry, spell combat, etc.
+be used in other ways, though - works with flurry, spell combat, etc. It is for this reason that almost all magi use scimitars \
+and know how to dance.
 """]
 
 [dervish_dance.prereqs]
@@ -138,9 +139,13 @@ feats = ["weapon_finesse"]
 [difficult_swings]
 text = ["""
 When you take a full attack, squares near you become difficult terrain. Difficult terrain is harder to move into, not \
-out of, so this doesn't stop people from escaping like you might think. However, if you have access to reach (from a reach \
-weapon or Lunge) it greatly inconveniences medium melee enemies, as they cannot 5-foot step in to full attack you after \
-you full attack them. 
+out of, so this doesn't stop people from escaping like you might think. However, this can greatly inconvenience melee enemies \
+without reach, because they cannot 5ft step in to attack you.
+""",
+"""
+Strongest paired with reach, because you'll naturally be positioned such that enemies have to 5ft step to approach and if they \
+do it with a move action they provoke an AoO. However, usable by any melee character if you start your turn adjacent to an enemy - full \
+attack, then 5ft step away and watch as they fail to meaningfully retaliate.
 """]
 
 [difficult_swings.prereqs]
@@ -285,3 +290,84 @@ article_redirect = "improved_trip_line"
 
 [greater_trip.prereqs]
 feats = [["", "dirty_fighting", "combat_expertise"], "improved_trip"]
+
+[brilliant_planner]
+text = ["""
+Feats that only trigger once/day are generally bad; this is an example of how good such a feat has to be to be worth considering. \
+Once per day, you can retroactively declare you purchased an item or service. The money cap prevents you from buying many particularly \
+powerful magic items, but 'remembering' to have the right scroll at the right time can change the trajectory of the plot. It requires \
+a decent bit of system knowledge (or skill at quick spell list diving) to fully use, but the payoff is massive.
+"""]
+
+[deific_obedience_-_pharasma]
+text = ["""
+Gives you +2 to hit with daggers. Weapon Focus is +1 to hit, and is distinctly not worth it; if your to-hit's feeling a bit low \
+(maybe because you have 3/4 BAB) then a +2 that eventually also gives you some random magic might be.
+"""]
+
+[outslug_style_line]
+text = ["""
+A pretty good style, all things considered. The first feat gives you +1 AC and damage with a close weapon when you 5-ft step \
+which is nice but not exciting
+""",
+"""
+The second feat doubles these bonuses, and removes the AC penalty when you use Lunge - just a numbers feat, but \
+quite a lot of numbers.
+""",
+"""
+The third feat allows you to 5-ft step twice in a round, which is actually a pretty big increase to your mobility. \
+Combined with Lunge, you can full attack an enemy three squares away. 
+""",
+"""
+Unarmed combatants should probably turn to Pummelling Style over this for mobility (or just Flying Kick, if they're \ 
+an unchained monk). However, Two-Weapon Fighters will likely appreciate this if they have the feats to spare - \
+using gauntlets over shortswords is only a -1 penalty to damage, which this style compensates for, \
+and the increased mobility dramatically increases the odds you'll actually be able to full attack and use the \
+fighting style they spent so many feats on.  
+"""]
+
+[outslug_style]
+article_redirect = "outslug_style_line"
+
+[outslug_style.prereqs]
+feats = ["combat_expertise", "weapon_focus"]
+
+[outslug_weave]
+article_redirect = "outslug_style_line"
+
+[outslug_weave.prereqs]
+feats = ["combat_expertise", "weapon_focus", "lunge", "outslug_style"]
+
+[outslug_sprint]
+article_redirect = "outslug_style_line"
+
+[outslug_sprint.prereqs]
+feats = ["combat_expertise", "weapon_focus", "lunge", "outslug_style", "outslug_weave"]
+
+[snake_style_line]
+text = ["""
+A highly defensive style, that gives you most of its benefits off-turn. The first feat allows you to make a Sense Motive \
+check as an immediate action to negate an attack - notably, nothing about this feat requires you to be unarmed, so if you don't \
+have a use for a swift action this is worth picking up on any character. Unlike many similar abilities, this works on anything, \
+including ray attacks (which generally represent an immense amount of nastiness packed into a single attack roll). 
+""",
+"""
+The second feat is an odd collection of abilities, none of which are amazing. The bonuses against being knocked prone are quite \
+large but very specific, and because you have Snake Style you likely won't have your swift up on your turn to benefit from the \
+move-on-crit. Using Sense Motive to confirm crits is quite nice - given you're a Snake Style user, you should be pumping your \
+Sense Motive, so this really should mean you autoconfirm crits (skill rolls don't fail on a nat 1). But unarmed strike has \
+a terrible crit range and multiplier, so this is lss exciting than it might otherwise be.
+""",
+"""
+The final feat, meanwhile, is pretty good. After an enemy misses you, they provoke. You're almost guaranteed to get missed once \
+a round, due to your attack negation ability, and many enemies are big balls of natural attacks that are likely to whiff a few \
+attacks. Spending your immediate to make another attack isn't amazingly useful, because you can already use your immediate action \
+to negate an attack, which both avoids some damage and lets you make another attack anyway.
+""",
+"""
+The main use-case for this is picking up the first feat on non-unarmed attackers, as unarmed attackers probably want a style \
+that increases their offensive output. Still, the fact that this feat gives you benefits largely off-turn is interesting - \
+pick up Combat Style Mastery, an offensive style (e.g. Pummelling) and this, then have offence on your turn and defence off it. \
+A lot of feats, but undeniably effective.
+"""
+]

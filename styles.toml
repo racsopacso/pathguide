@@ -39,7 +39,8 @@ text = [
     """
     As a ranger, you can ignore the Dex prerequisites of Two-Weapon Fighting, allowing you to focus entirely on Strength. \
     Even though you sidestep the main disadvantage of this style, ranger's class bonuses to damage are not amazingly high, so \
-    they can't benefit from this as much as some other classes might. Still, it's definitely a competitive style.
+    they can't benefit from this as much as some other classes might. Still, it's definitely worth it, especially if you have \
+    an archetype like Guide that gives you reliable attack/damage bonuses before Instant Enemy.
     """]
 ]
 
