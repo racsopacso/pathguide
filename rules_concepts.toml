@@ -23,3 +23,4 @@ making picking up an ability to use it quite high-value for them.
 [swift_action_use.sources]
 feats = ["snake_style"]
 
+[combat_style]

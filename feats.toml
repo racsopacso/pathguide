@@ -371,3 +371,132 @@ pick up Combat Style Mastery, an offensive style (e.g. Pummelling) and this, the
 A lot of feats, but undeniably effective.
 """
 ]
+
+[orator]
+text = ["""
+Lets you use Linguistics to do a lot of what Bluff, Diplomacy and Intimidate normally do. Bluff and Intimidate are \
+replaced almost fully, with Linguistics covering everything except their in-combat uses. Given the combat uses of \
+these skills are pretty bad without investment, this gives you everything most people take both of these skills for.""",
+
+"""Diplomacy is more of an odd case, though this involves delving into the specifics of social skills in ways many DMs \
+will just ignore. You can change attitudes, but not make requests or gather information. Broadly speaking, what this means \
+is that given time you can make a person like you, but can't negotiate things from people who don't. You also can't ask for \
+large favours - anything beyond what a friendly person will give you with no check required is off-limits. 
+""",
+"""
+Still, even if it doesn't totally make you a perfect face with one skill, this is a pretty excellent deal. Using one skill \
+for all of this maximises the value of any increases to Linguistics you pick up - including the Skill Focus you had to take to \
+get this feat.
+"""
+]
+
+[orator.prereqs]
+feats = ["skill_focus_(linguistics)"]
+
+[graverisen]
+text = ["""
+An achievement feat, and one from paizo's 3.5 days, so very possibly disallowed. However, it's fluffy, not particularly broken and \
+unlike certain other achievement feats doesn't require intense amounts of tracking. 
+""",
+"""
+Once per life, this allows you to cheat death. You entirely ignore the effect that would kill you. The limit of "once per life" \
+prevents too much abuse, but straight up ignoring something is quite powerful. Notably, this is strongest against effects that \
+instantly kill characters - if a character's low and getting full attacked, and this triggers, they'll probably just die to the \
+next attack. Given that a player dying to a failed save against a Finger of Death is a miserable experience for both player and GM, \
+this feat is actually relatively healthy for the game.
+"""]
+
+[wilding_line]
+text = ["""
+The first feat of this line, Wilding, must be taken at first level and gives you auto-scaling Wild Empathy. As an ability, \
+Wild Empathy suffers from being somewhat ill-defined - unlike Handle Animal, it's unclear exactly what sort of help a friendly \
+animal will give you, if anything. Still, if your DM's relatively open to creative ideas, this is charitably equivalent to giving \
+you an auto-scaling skill.
+""",
+"""
+Many feats have Wilding as a prerequisite, but all but one are very unexciting. Thankfully, that one's very good. Wilding Mind \
+requires Wis 13, but allows you to reroll saves against fear or mind-affecting effects as an immediate action. As a cost you take \
+some Int damage, which makes this unappealing on some characters, but it's a decent way to compensate for a poor Will save if \
+you have feats to spare.
+"""]
+
+subfeats = ["wilding", "wilding_mind"]
+
+[wilding]
+article_redirect = "wilding_line"
+
+[wilding_mind]
+article_redirect = "wilding_line"
+
+[wilding_mind.prereqs]
+feats = ["wilding"]
+
+[blind-fight]
+text = [
+"""
+Situational, but applies in a decent number of situations, and shines whenever it applies. Takes the total concealment \
+miss chance from 50% to 25%, and the partial concealment miss chance from 20% to 4%.
+""",
+"""
+Situations this applies to include: poor lighting conditions, inflicted blindness, invisible enemies, gas-based attacks, gaze attacks. \ 
+These all sound quite niche, but many of them are strong tools available to casters across a range of levels. Worth considering \
+if you have a DM who isn't afraid tu run tactically smart enemies (especially casters), or who actually rolls for weather conditions.
+"""]
+
+["butterfly's_sting"]
+text = [
+"""
+A very strong feat for your team. When you crit an enemy, you can choose to donate it to the next creature to strike them. \
+Requires an ally who's able to take advantage, but almost any party should have one - convince the fighter to use a scythe \
+instead of a greatsword, or the caster to bring some attack-roll spells. 
+""",
+"""
+To get the most benefit, you want the maximum chance of generating crits yourself. This means weapons with 18-20 base crit ranges, the Improved \ 
+Critical feat or making the weapons Keen, and as many attacks as possible. 
+"""
+]
+
+
+[improved_initiative]
+text = [
+"""
+The standard for a numbers feat. Gives a large bonus to a very important number, initiative. 
+""",
+"""
+Stronger if you're a character who particularly likes going first, like anyone with sneak attack. Weaker if you don't \
+particularly care about turn order, like melee characters without a way to move and attack who rely on enemies approaching them. 
+"""
+]
+
+[step_up]
+text = [
+"""
+When someone adjacent to you takes a 5-ft step, you can follow them. This sounds quite niche, but 5-ft stepping away is \
+a caster's go-to response to finding themselves adjacent to a melee enemy. After they do this, and you follow them, they \
+find themselves stuck - can't move because they stepped, and any spell must be cast defensively or provoke. 
+"""
+]
+
+["wanderer's_fortune"]
+text = [
+"""
+As a swift action, you can give yourself freedom of movement. This essentially allows you to ignore any movement-impairing \
+nastiness - grapple, paralysis, entangled. That's a pretty broad category to be able to become immune to.
+"""
+]
+
+[shrapnel_strike]
+text = [
+"""
+Gives you an extremely large bonus on Strength checks to break brittle objects (so a bonus against anything you'd want to break, \
+with the unfortunate exception of ropes tying you up). This bonus quickly becomes larger than your Str bonus would ever reasonably \
+be, and stacks with any Str you have, allowing you to play a character with extreme strength in-fiction. 
+""",
+"""
+To put it in perspective: an adamantine chain has a break DC of 30. With a (reasonable for a strong character) Str mod of +4, you \
+can take 20 and break out of chains meant to hold giants at level 6.
+"""
+]
+
+[shrapnel_strike.prereqs]
+feats = ["improved_sunder", "power_attack"]

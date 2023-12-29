@@ -3,7 +3,7 @@
 {% import "macros.html" as macros %}
 
 <h1 style="margin-bottom:0">{{body.full_name}}</h1>
-{% for text in body.text.get_text(cookies) %}
+{% for text in body.text.get_text(provided_dict) %}
 <p>
 {{text}}
 </p>

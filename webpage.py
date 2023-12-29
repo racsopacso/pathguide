@@ -52,9 +52,8 @@ def parse_cookie_adj(cookie_adj: str, cookies: t.Dict[str, str]):
 def chain_of_providence(start: RulesObj):
     if start.type == "nondbfeat":
         return
-    
-    if getattr(start, "required", None) or getattr(start, "recommended", None):
-        yield start
+
+    yield start
     
     if start.provides:
         for provided_obj in start.provides.objs:
@@ -91,6 +90,18 @@ class PageResponse:
         elem_chain = chain(incl_styles, incl_classes)
 
         return [feat for obj in elem_chain for feat in chain_of_providence(obj)]    
+    
+    def get_provided_dict(self):
+        ret: t.Dict[str, t.Set[str]] = {}
+
+        for obj in self.get_provides():
+            if obj.type in ret:
+                ret[obj.type].add(obj.name)
+            else:
+                ret[obj.type] = {obj.name}
+        
+        return ret
+
 
     def generate_response(self) -> _TemplateResponse:
         incl_classes, _ = self.classes
@@ -101,6 +112,7 @@ class PageResponse:
         resp = templates.TemplateResponse(self.html_page_name,
                                         {"request": self.request,
                                         "cookies": gen_sidebar(self.request.cookies),
+                                        "provided_dict": self.get_provided_dict(),
                                         "omnimap": omnimap,
                                         "lookup_obj": self,
                                         "imports": {"zip_longest": zip_longest},

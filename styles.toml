@@ -33,7 +33,7 @@ feats = ["two-weapon_fighting_line"]
 [twf.recommended]
 feats =  ["dazing_assault", "hand's_autonomy", "artful_dodge"]
 
-[twf.replacements.classes.ranger]
+[twf.replacements.rules_concepts.combat_style]
 text = [
     ["attribute",
     """
@@ -219,3 +219,5 @@ feats = ["improved_trip_line"]
 
 [trip.recommended]
 feats = ["combat_reflexes"]
+
+

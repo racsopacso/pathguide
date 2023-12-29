@@ -11,7 +11,7 @@ rules_concepts = ["dex_to_damage"]
 
 [medium]
 bab = "mid"
-tags = ["caster"]
+tags = ["caster", "psychic"]
 text = ["""
 ghost fellows
 """]
@@ -22,6 +22,7 @@ attributes = ["charisma"]
 
 [medium.recommended]
 feats = ["spirit_focus_(champion)"]
+styles = ["twf", "thf", "pure_finesse", "snb"]
 
 [ranger]
 bab = "full"
@@ -32,3 +33,4 @@ owo
 
 [ranger.provides]
 feats = ["two-weapon_fighting", "improved_two-weapon_fighting", "greater_two-weapon_fighting"]
+rules_concepts = ["combat_style"]
